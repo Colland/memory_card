@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+.bg-site {
+    background-image: url('./assets/bg-1.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+@layer base {
+    @font-face {
+        font-family: 'pokemonPixelFont';
+        src: url('assets/pokemon_pixel_font.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+    }
+}

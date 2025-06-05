@@ -1,8 +1,28 @@
 import { useEffect, useState } from "react";
+import { shuffleArray } from "../utils";
 import Card from "./Card";
 
 function GameScreen() {
-    const [pokemonData, setPokemonData] = useState();
+    const [pokemonData, setPokemonData] = useState(null);
+    const filteredPokemon = pokemonData ? filterPokemon(7) : null;
+
+    console.table(pokemonData);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const numSet = new Set();
+
+            while(numSet.size < 10) {
+                numSet.add(generateRandomNum());
+            }
+
+            const numList = Array.from(numSet);
+            const fetchedPokemon = await fetchPokemon(numList);
+            setPokemonData(fetchedPokemon);
+        }
+
+        fetchData();
+    }, [])
 
     const generateRandomNum = () => {
         return Math.ceil(Math.random() * 151);
@@ -16,7 +36,8 @@ function GameScreen() {
                     .then((data) => ({
                         name: data.name,
                         image: data.sprites.other["official-artwork"].front_default,
-                        id: id
+                        id: id,
+                        hasBeenClicked: false
                     }))
             )
         );
@@ -24,31 +45,36 @@ function GameScreen() {
         return pokemonData;
     }
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const numSet = new Set();
+    const cardClicked = (pokemonId) => {
+        setPokemonData(prevData => { 
+            const updatedData = prevData.map((pokemon) => 
+                pokemon.id === pokemonId ? {...pokemon, hasBeenClicked: true} : pokemon
+            )
+            
+            return shuffleArray(updatedData);
+        });
+    }
 
-            while(numSet.size < 7) {
-                numSet.add(generateRandomNum());
+    function filterPokemon(length) {
+        const filteredPokemon = pokemonData.slice(0, length);
+
+        // Ensure at least one pokemon in the filtered list has never been clicked/selected.
+        if(filteredPokemon.filter((pokemon) => pokemon.hasBeenClicked === false).length === 0) {
+            for(const pokemon of pokemonData) {
+                if(pokemon.hasBeenClicked === false) {
+                    filteredPokemon[0] = pokemon;
+                    break;
+                }
             }
-
-            const numList = Array.from(numSet);
-            const fetchedPokemon = await fetchPokemon(numList);
-            setPokemonData(fetchedPokemon);
         }
 
-        fetchData();
-    }, [])
-
-    const cardClicked = (pokemonId) => {
-        setPokemonData(pokemonData.map((pokemon) => 
-            pokemon.id === pokemonId ? {...pokemon, hasBeenClicked: true} : pokemon
-        ));
+        return filteredPokemon;
     }
     
+
     return (
         <div className="flex justify-center flex-wrap gap-10 p-40 mb-20">
-            {pokemonData ? pokemonData.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />) : "Loading..."}
+            {pokemonData ? filteredPokemon.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />) : "Loading..."}
         </div>
     )
 }

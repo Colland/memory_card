@@ -4,9 +4,13 @@ import Card from "./Card";
 
 function GameScreen() {
     const [pokemonData, setPokemonData] = useState(null);
-    const filteredPokemon = pokemonData ? filterPokemon(7) : null;
+    const filteredPokemon = pokemonData ? filterPokemon(20) : null;
 
-    console.table(pokemonData);
+    const [lives, setLives] = useState(3);
+    const [gameIsOver, setGameIsOver] = useState(false);
+    const [score, setScore] = useState(0);
+
+    console.log(lives);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,8 +39,10 @@ function GameScreen() {
                     .then((res) => res.json())
                     .then((data) => ({
                         name: data.name,
-                        image: data.sprites.other["official-artwork"].front_default,
+                        image: data.sprites.front_default,
                         id: id,
+                        types: data.types.map(type => type.type.name),
+                        height: data.height,
                         hasBeenClicked: false
                     }))
             )
@@ -46,13 +52,29 @@ function GameScreen() {
     }
 
     const cardClicked = (pokemonId) => {
-        setPokemonData(prevData => { 
-            const updatedData = prevData.map((pokemon) => 
-                pokemon.id === pokemonId ? {...pokemon, hasBeenClicked: true} : pokemon
-            )
-            
-            return shuffleArray(updatedData);
-        });
+        const foundPokemon = pokemonData.find((pokemon) => pokemon.id === pokemonId)
+        console.table(foundPokemon);
+
+        if(foundPokemon.hasBeenClicked === true) {
+            setLives(lives - 1);
+
+            if((lives - 1) === 0) {
+                gameOver();
+            }
+            else {
+                setPokemonData(shuffleArray(pokemonData));
+            }
+        }
+        else {
+            setScore(score + 1);
+            setPokemonData(prevData => { 
+                const updatedData = prevData.map((pokemon) => 
+                    pokemon.id === pokemonId ? {...pokemon, hasBeenClicked: true} : pokemon
+                )
+                
+                return shuffleArray(updatedData);
+            });
+        }
     }
 
     function filterPokemon(length) {
@@ -70,11 +92,30 @@ function GameScreen() {
 
         return filteredPokemon;
     }
+
+    function gameOver() {
+        setGameIsOver(true);
+    }
     
 
+    if(gameIsOver) {
+        return (
+            <div>
+                <h1>GAME OVER BOY</h1>
+            </div>
+        )
+    }
+
     return (
-        <div className="flex justify-center flex-wrap gap-10 p-40 mb-20">
-            {pokemonData ? filteredPokemon.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />) : "Loading..."}
+        <div>
+            <div className="flex justify-center items-center gap-10 mt-[-20px]">
+                <p className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6">Score: &nbsp;{score}</p>
+                <p className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6">Lives: &nbsp;{lives}</p>
+            </div>
+
+            <div className="flex justify-center flex-wrap gap-10 p-40">
+                {pokemonData ? filteredPokemon.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />) : "Loading..."}
+            </div>
         </div>
     )
 }

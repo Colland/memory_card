@@ -1,38 +1,26 @@
+import { useState } from "react";
 import pikachuImg from './assets/pikachu.png';
 import GameScreen from './game/GameScreen';
+import StartScreen from './StartScreen';
+import { heavyTextShadow } from './styles/textShadows';
 
 function App() {
+  const [activeView, setActiveView] = useState("startScreen");
+  const [chosenDifficulty, setChosenDifficulty] = useState("Easy");
+  const [chosenGeneration, setChosenGeneration] = useState("I");
+
+  function startGame (difficulty, generation) {
+    setChosenDifficulty(difficulty);
+    setChosenGeneration(generation);
+    setActiveView("gameScreen");
+  }
+
   return (
     <div className="min-h-screen w-full flex flex-col">
       <header className="h-30 flex justify-center items-center">
         <h1 className="text-[100px] font-['pokemonPixelFont'] font-semibold text-blue-50 ml-[70px]"
             style={{
-                    textShadow: `
-                        -2px -2px 0 #000,
-                        -2px -1px 0 #000,
-                        -2px  0px 0 #000,
-                        -2px  1px 0 #000,
-                        -2px  2px 0 #000,
-                        -1px -2px 0 #000,
-                        -1px -1px 0 #000,
-                        -1px  0px 0 #000,
-                        -1px  1px 0 #000,
-                        -1px  2px 0 #000,
-                         0px -2px 0 #000,
-                         0px -1px 0 #000,
-                         0px  1px 0 #000,
-                         0px  2px 0 #000,
-                         1px -2px 0 #000,
-                         1px -1px 0 #000,
-                         1px  0px 0 #000,
-                         1px  1px 0 #000,
-                         1px  2px 0 #000,
-                         2px -2px 0 #000,
-                         2px -1px 0 #000,
-                         2px  0px 0 #000,
-                         2px  1px 0 #000,
-                         2px  2px 0 #000
-                    `
+                    textShadow: heavyTextShadow
                 }}
           >
             <span className="text-red-500">Poke</span> Dex
@@ -40,8 +28,8 @@ function App() {
         <img src={pikachuImg} alt="pikachu" className="h-[4.2rem] mb-4 mr-3" />
       </header>
       
-      <main className="flex items-end grow-1">
-        <GameScreen />
+      <main className="flex justify-center items-center grow-1">
+        {activeView === "startScreen" ? <StartScreen startGame={startGame} /> : <GameScreen difficulty={chosenDifficulty} generation={chosenGeneration} />}
       </main>
       
       <footer className="h-30">
@@ -51,4 +39,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

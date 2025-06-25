@@ -3,11 +3,12 @@ import { shuffleArray } from "../utils";
 import { motion } from "framer-motion";
 import Card from "./Card";
 import { heavyTextShadow } from "../styles/textShadows";
+import { totalPokemonPerDifficulty, generations, generationFloor } from "../data/gameData";
 
-function GameScreen() {
+function GameScreen({ difficulty, generation }) {
     const [pokemonData, setPokemonData] = useState(null);
-    const filteredPokemon = pokemonData ? filterPokemon(20) : null;
-    const totalPokemonAmount = 10;
+    const filteredPokemon = pokemonData ? filterPokemon(totalPokemonPerDifficulty[difficulty]) : null;
+    const pokemonToFetch = totalPokemonPerDifficulty[difficulty] || 10;
 
     const hardCodedLives = 3;
     const [lives, setLives] = useState(hardCodedLives);
@@ -20,11 +21,12 @@ function GameScreen() {
         const fetchData = async () => {
             const numSet = new Set();
 
-            while(numSet.size < totalPokemonAmount) {
+            while(numSet.size < pokemonToFetch) {
                 numSet.add(generateRandomNum());
             }
 
             const numList = Array.from(numSet);
+            console.log(numList)
             const fetchedPokemon = await fetchPokemon(numList);
             setPokemonData(fetchedPokemon);
         }
@@ -33,7 +35,7 @@ function GameScreen() {
     }, [])
 
     const generateRandomNum = () => {
-        return Math.ceil(Math.random() * 151);
+        return Math.ceil((Math.random() * generations[generation]) + generationFloor[generation]);
     }
 
     const fetchPokemon = async(pokemonIdList) => {
@@ -72,7 +74,7 @@ function GameScreen() {
         else {
             setScore(score + 1);
 
-            if(score+1 === totalPokemonAmount) {
+            if(score+1 === pokemonToFetch) {
                 gameOver();
             }
             else {
@@ -116,7 +118,7 @@ function GameScreen() {
     if(gameIsOver) {
         if(lives <= 0) {
             return (
-                <div className="flex flex-col justify-start items-center gap-4 w-96 h-48 p-4 m-auto rounded-lg bg-white border-4 border-black text-6xl font-[pokemonPixelFont] text-black">
+                <div className="flex flex-col justify-start items-center self-center gap-4 w-96 h-48 p-4 m-auto rounded-lg bg-white border-4 border-black text-6xl font-[pokemonPixelFont] text-black">
                     <p>You lost!</p>
                     <motion.p
                         animate={{ scale: 1.2 }}

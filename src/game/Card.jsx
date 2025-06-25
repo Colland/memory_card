@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { steelGradient } from "../styles/steelGradient";
 
 function Card({ pokemon, cardClicked }) {
     const typeColors = {
@@ -16,7 +17,9 @@ function Card({ pokemon, cardClicked }) {
         dragon: "#ceb9ff",
         ice: "#a2f3ff",
         fairy: "#EE99AC",
-        ghost: "#e700f952"
+        ghost: "#e700f952",
+        dark: "#453620e6",
+        steel: ""
     }
 
     const formatHeight = (num) => {
@@ -30,10 +33,13 @@ function Card({ pokemon, cardClicked }) {
             layout 
             className="w-60 h-80 flex flex-col justify-start items-center p-4 pt-0 border-4 border-[#696969] rounded-lg font-[pokemonPixelFont]"
             onClick={() => cardClicked(pokemon.id)}
-            style={{ backgroundColor: cardColor }}
+            style={{
+                background: pokemon.types[0] === "steel" ? steelGradient : cardColor,
+                color: pokemon.types[0] === "dark" ? "#FFFFFF" : "#101828"
+             }}
             whileHover={{ scale: 1.05 }}
         >
-            <h2 className="text-3xl text-gray-900 self-start">{pokemon.name}</h2>
+            <h2 className="text-3xl self-start">{pokemon.name}</h2>
             <div className="bg-white rounded-xl h-[150px] border-[#696969] border-4">
                 <img src={pokemon.image} alt={pokemon.name} className="w-[200px] h-[192px] object-contain"/>
             </div>

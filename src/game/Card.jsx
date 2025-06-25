@@ -44,7 +44,7 @@ function Card({ pokemon, cardClicked }) {
                 <img src={pokemon.image} alt={pokemon.name} className="w-[200px] h-[192px] object-contain"/>
             </div>
             <div className="mt-4 flex flex-col self-start text-2xl">
-                <p>Types: {pokemon.types[0]}</p>
+                <p>Types: {pokemon.types[0] + (pokemon.types[1] ? ", " + pokemon.types[1] : "")}</p>
                 <p>Height: {formatHeight(pokemon.height)}</p>
                 <p>Generation: I</p>
             </div>

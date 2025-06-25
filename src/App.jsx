@@ -29,12 +29,9 @@ function App() {
       </header>
       
       <main className="flex justify-center items-center grow-1">
-        {activeView === "startScreen" ? <StartScreen startGame={startGame} /> : <GameScreen difficulty={chosenDifficulty} generation={chosenGeneration} />}
+        {activeView === "startScreen" ? <StartScreen startGame={startGame} /> : <GameScreen difficulty={chosenDifficulty} generation={chosenGeneration} setActiveView={setActiveView}/>}
       </main>
-      
-      <footer className="h-30">
 
-      </footer>
     </div>
   )
 }

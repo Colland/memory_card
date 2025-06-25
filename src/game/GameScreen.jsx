@@ -6,7 +6,7 @@ import { heavyTextShadow } from "../styles/textShadows";
 import { totalPokemonPerDifficulty, generations, generationFloor } from "../data/gameData";
 import pokeballLoader from "../assets/pokeball_loader.png";
 
-function GameScreen({ difficulty, generation }) {
+function GameScreen({ difficulty, generation, setActiveView }) {
     const [pokemonData, setPokemonData] = useState(null);
     const filteredPokemon = pokemonData ? filterPokemon(totalPokemonPerDifficulty[difficulty]) : null;
     const pokemonToFetch = totalPokemonPerDifficulty[difficulty] || 10;
@@ -31,10 +31,8 @@ function GameScreen({ difficulty, generation }) {
             const numList = Array.from(numSet);
             console.log(numList)
             const fetchedPokemon = await fetchPokemon(numList);
-            setTimeout(() => {
-                            setPokemonData(fetchedPokemon);
-                            setLoading(false);
-            }, 5000)
+            setPokemonData(fetchedPokemon);
+            setLoading(false);
         }
 
         fetchData();
@@ -119,6 +117,7 @@ function GameScreen({ difficulty, generation }) {
         setLives(hardCodedLives);
         setScore(0);
         setGameIsOver(false);
+        setActiveView("startScreen");
     }
 
     if(gameIsOver) {
@@ -175,7 +174,7 @@ function GameScreen({ difficulty, generation }) {
                             textShadow: heavyTextShadow
                         }}
                     >
-                        Score: &nbsp;{score}
+                        Score: &nbsp;{score} / {pokemonToFetch}
                     </motion.p>
                     <motion.p
                         key={`lives-${lives}`}
@@ -190,7 +189,7 @@ function GameScreen({ difficulty, generation }) {
                     </motion.p>
                 </div>
 
-                <div className="flex justify-center flex-wrap gap-10 p-42">
+                <div className="flex justify-center flex-wrap gap-10 px-42 pt-2">
                     {filteredPokemon.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />)}
                 </div>
             </div>

@@ -1,4 +1,4 @@
-export const heavyTextShadow = `-2px -2px 0 #000,
+export const heavyTextShadow = ` -2px -2px 0 #000,
                             -2px -1px 0 #000,
                             -2px  0px 0 #000,
                             -2px  1px 0 #000,
@@ -21,4 +21,4 @@ export const heavyTextShadow = `-2px -2px 0 #000,
                             2px -1px 0 #000,
                             2px  0px 0 #000,
                             2px  1px 0 #000,
-                            2px  2px 0 #000, `;
+                            2px  2px 0 #000 `;

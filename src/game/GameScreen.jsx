@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { shuffleArray } from "../utils";
 import { motion } from "framer-motion";
 import Card from "./Card";
+import { heavyTextShadow } from "../styles/textShadows";
 
 function GameScreen() {
     const [pokemonData, setPokemonData] = useState(null);
     const filteredPokemon = pokemonData ? filterPokemon(20) : null;
+    const totalPokemonAmount = 10;
 
     const hardCodedLives = 3;
     const [lives, setLives] = useState(hardCodedLives);
@@ -18,7 +20,7 @@ function GameScreen() {
         const fetchData = async () => {
             const numSet = new Set();
 
-            while(numSet.size < 10) {
+            while(numSet.size < totalPokemonAmount) {
                 numSet.add(generateRandomNum());
             }
 
@@ -69,13 +71,19 @@ function GameScreen() {
         }
         else {
             setScore(score + 1);
-            setPokemonData(prevData => { 
-                const updatedData = prevData.map((pokemon) => 
-                    pokemon.id === pokemonId ? {...pokemon, hasBeenClicked: true} : pokemon
-                )
-                
-                return shuffleArray(updatedData);
-            });
+
+            if(score+1 === totalPokemonAmount) {
+                gameOver();
+            }
+            else {
+                setPokemonData(prevData => { 
+                    const updatedData = prevData.map((pokemon) => 
+                        pokemon.id === pokemonId ? {...pokemon, hasBeenClicked: true} : pokemon
+                    )
+                    
+                    return shuffleArray(updatedData);
+                });
+            }
         }
     }
 
@@ -106,18 +114,36 @@ function GameScreen() {
     }
 
     if(gameIsOver) {
-        return (
-            <div className="flex flex-col justify-start items-center gap-4 w-96 h-48 p-4 m-auto rounded-lg bg-white border-4 border-black text-6xl font-[pokemonPixelFont] text-black">
-                <p>You lost!</p>
-                <motion.p
-                    animate={{ scale: 1.2 }}
-                    transition={{ repeat: Infinity, repeatType: "reverse", duration: 1}}
-                    onClick={resetGame}
-                >
-                    Try again?
-                </motion.p>
-            </div>
-        )
+        if(lives <= 0) {
+            return (
+                <div className="flex flex-col justify-start items-center gap-4 w-96 h-48 p-4 m-auto rounded-lg bg-white border-4 border-black text-6xl font-[pokemonPixelFont] text-black">
+                    <p>You lost!</p>
+                    <motion.p
+                        animate={{ scale: 1.2 }}
+                        transition={{ repeat: Infinity, repeatType: "reverse", duration: 1}}
+                        onClick={resetGame}
+                        className="cursor-pointer"
+                    >
+                        Try again?
+                    </motion.p>
+                </div>
+            )
+        }
+        else {
+            return (
+                <div className="flex flex-col justify-start items-center gap-4 w-96 h-48 p-4 m-auto rounded-lg bg-white border-4 border-black text-6xl font-[pokemonPixelFont] text-black">
+                    <p>You won!</p>
+                    <motion.p
+                        animate={{ scale: 1.2 }}
+                        transition={{ repeat: Infinity, repeatType: "reverse", duration: 1}}
+                        onClick={resetGame}
+                        className="cursor-pointer"
+                    >
+                        Play again?
+                    </motion.p>
+                </div>
+            )
+        }
     }
 
     return (
@@ -129,32 +155,7 @@ function GameScreen() {
                     transition={{ repeat: 1, repeatType: "reverse", duration: 0.2 }}
                     className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6"
                     style={{
-                        textShadow: `
-                            -2px -2px 0 #000,
-                            -2px -1px 0 #000,
-                            -2px  0px 0 #000,
-                            -2px  1px 0 #000,
-                            -2px  2px 0 #000,
-                            -1px -2px 0 #000,
-                            -1px -1px 0 #000,
-                            -1px  0px 0 #000,
-                            -1px  1px 0 #000,
-                            -1px  2px 0 #000,
-                            0px -2px 0 #000,
-                            0px -1px 0 #000,
-                            0px  1px 0 #000,
-                            0px  2px 0 #000,
-                            1px -2px 0 #000,
-                            1px -1px 0 #000,
-                            1px  0px 0 #000,
-                            1px  1px 0 #000,
-                            1px  2px 0 #000,
-                            2px -2px 0 #000,
-                            2px -1px 0 #000,
-                            2px  0px 0 #000,
-                            2px  1px 0 #000,
-                            2px  2px 0 #000
-                        `
+                        textShadow: heavyTextShadow
                     }}
                 >
                     Score: &nbsp;{score}
@@ -165,32 +166,7 @@ function GameScreen() {
                     transition={{ repeat: 1, repeatType: "reverse", duration: 0.2 }}
                     className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6"
                     style={{
-                        textShadow: `
-                            -2px -2px 0 #000,
-                            -2px -1px 0 #000,
-                            -2px  0px 0 #000,
-                            -2px  1px 0 #000,
-                            -2px  2px 0 #000,
-                            -1px -2px 0 #000,
-                            -1px -1px 0 #000,
-                            -1px  0px 0 #000,
-                            -1px  1px 0 #000,
-                            -1px  2px 0 #000,
-                            0px -2px 0 #000,
-                            0px -1px 0 #000,
-                            0px  1px 0 #000,
-                            0px  2px 0 #000,
-                            1px -2px 0 #000,
-                            1px -1px 0 #000,
-                            1px  0px 0 #000,
-                            1px  1px 0 #000,
-                            1px  2px 0 #000,
-                            2px -2px 0 #000,
-                            2px -1px 0 #000,
-                            2px  0px 0 #000,
-                            2px  1px 0 #000,
-                            2px  2px 0 #000
-                        `
+                        textShadow: heavyTextShadow
                     }}
                 >
                         Lives: &nbsp;{lives}

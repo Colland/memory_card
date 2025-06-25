@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Card from "./Card";
 import { heavyTextShadow } from "../styles/textShadows";
 import { totalPokemonPerDifficulty, generations, generationFloor } from "../data/gameData";
+import pokeballLoader from "../assets/pokeball_loader.png";
 
 function GameScreen({ difficulty, generation }) {
     const [pokemonData, setPokemonData] = useState(null);
@@ -14,6 +15,8 @@ function GameScreen({ difficulty, generation }) {
     const [lives, setLives] = useState(hardCodedLives);
     const [gameIsOver, setGameIsOver] = useState(false);
     const [score, setScore] = useState(0);
+
+    const [loading, setLoading] = useState(true);
 
     console.log(lives);
 
@@ -28,7 +31,10 @@ function GameScreen({ difficulty, generation }) {
             const numList = Array.from(numSet);
             console.log(numList)
             const fetchedPokemon = await fetchPokemon(numList);
-            setPokemonData(fetchedPokemon);
+            setTimeout(() => {
+                            setPokemonData(fetchedPokemon);
+                            setLoading(false);
+            }, 5000)
         }
 
         fetchData();
@@ -148,38 +154,48 @@ function GameScreen({ difficulty, generation }) {
         }
     }
 
-    return (
-        <div>
-            <div className="flex justify-center items-center gap-10 mt-[-20px]">
-                <motion.p
-                    key={`score-${score}`}
-                    animate={{ color: "#22e920", scale: 1.2 }}
-                    transition={{ repeat: 1, repeatType: "reverse", duration: 0.2 }}
-                    className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6"
-                    style={{
-                        textShadow: heavyTextShadow
-                    }}
-                >
-                    Score: &nbsp;{score}
-                </motion.p>
-                <motion.p
-                    key={`lives-${lives}`}
-                    animate={{ color: "#fb2c36", scale: 1.2 }}
-                    transition={{ repeat: 1, repeatType: "reverse", duration: 0.2 }}
-                    className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6"
-                    style={{
-                        textShadow: heavyTextShadow
-                    }}
-                >
-                        Lives: &nbsp;{lives}
-                </motion.p>
-            </div>
+    if(loading) {
+        return (
+            <img src={pokeballLoader}
+                 alt="loading..."
+                 className="w-32 h-32 animate-spin" 
+            />
+        )
+    }
+    else {
+        return (
+            <div>
+                <div className="flex justify-center items-center gap-10 mt-[-20px]">
+                    <motion.p
+                        key={`score-${score}`}
+                        animate={{ color: "#22e920", scale: 1.2 }}
+                        transition={{ repeat: 1, repeatType: "reverse", duration: 0.2 }}
+                        className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6"
+                        style={{
+                            textShadow: heavyTextShadow
+                        }}
+                    >
+                        Score: &nbsp;{score}
+                    </motion.p>
+                    <motion.p
+                        key={`lives-${lives}`}
+                        animate={{ color: "#fb2c36", scale: 1.2 }}
+                        transition={{ repeat: 1, repeatType: "reverse", duration: 0.2 }}
+                        className="text-6xl text-white font-[pokemonPixelFont] rounded-xl pt-1 pb-1 pl-6 pr-6"
+                        style={{
+                            textShadow: heavyTextShadow
+                        }}
+                    >
+                            Lives: &nbsp;{lives}
+                    </motion.p>
+                </div>
 
-            <div className="flex justify-center flex-wrap gap-10 p-42">
-                {pokemonData ? filteredPokemon.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />) : "Loading..."}
+                <div className="flex justify-center flex-wrap gap-10 p-42">
+                    {filteredPokemon.map((pokemon) => <Card pokemon={pokemon} cardClicked={cardClicked} key={pokemon.id} />)}
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default GameScreen;
